@@ -1,16 +1,17 @@
 # render.yaml
 services:
   - type: web
-    name: your-fastapi-app # Ganti dengan nama aplikasi yang kamu inginkan
+    # Ganti dengan nama yang lebih pendek dan deskriptif, misal: admin-python-api
+    name: admin-python-api
     env: python
-    # Karena requirements.txt langsung di dalam folder 'backend' (root clone Render), tidak perlu 'backend/'
-    buildCommand: "pip install -r requirements.txt"
-    # Karena app/main:app langsung di dalam folder 'backend' (root clone Render), tidak perlu 'backend/'
-    startCommand: "gunicorn app.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT"
+    # Mengasumsikan requirements.txt ada di dalam folder 'backend' dari root repositori
+    buildCommand: "pip install -r backend/requirements.txt"
+    # Mengasumsikan app/main:app ada di dalam folder 'backend' dari root repositori
+    startCommand: "gunicorn backend/app/main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT"
     envVars:
       - key: DATABASE_URL
-        # Isi ini di dashboard Render
+        # Ini akan diisi dari dashboard Render
       - key: FIREBASE_SERVICE_ACCOUNT_KEY_PATH
-        # Isi ini di dashboard Render
+        # Ini akan diisi dari dashboard Render
       - key: PYTHONUNBUFFERED
         value: "1"
