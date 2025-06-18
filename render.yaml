@@ -1,14 +1,16 @@
 # render.yaml
 services:
   - type: web
-    name: adminpython.onrender.com
+    name: your-fastapi-app # Ganti dengan nama aplikasi yang kamu inginkan
     env: python
-    buildCommand: "pip install -r requirements.txt"
+    # Karena requirements.txt langsung di dalam folder 'backend' (root clone Render), tidak perlu 'backend/'
+    buildCommand: "pip install -r backend/requirements.txt"
+    # Karena app/main:app langsung di dalam folder 'backend' (root clone Render), tidak perlu 'backend/'
     startCommand: "gunicorn app.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT"
     envVars:
       - key: DATABASE_URL
-        # Ini akan diisi dari dashboard Render, tapi bisa juga diisi di sini jika kamu mau
+        # Isi ini di dashboard Render
       - key: FIREBASE_SERVICE_ACCOUNT_KEY_PATH
-        # Ini akan diisi dari dashboard Render
+        # Isi ini di dashboard Render
       - key: PYTHONUNBUFFERED
-        value: "1" # Penting untuk logging di Render
+        value: "1"
