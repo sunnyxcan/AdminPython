@@ -31,6 +31,7 @@ origins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "https://adminreachpython.web.app",
+    "https://adminpython.onrender.com",
 ]
 
 app.add_middleware(
