@@ -7,7 +7,7 @@ services:
     # (dan kita akan menginformasikan Render bahwa 'backend' adalah root projectnya)
     buildCommand: "pip install -r requirements.txt"
     # Karena app/main:app berada langsung di dalam folder 'backend'
-    startCommand: "gunicorn app.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT"
+    startCommand: "gunicorn app/main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT --reload --timeout 120 --keep-alive 5 --graceful-timeout 10"
     envVars:
       - key: DATABASE_URL
       - key: FIREBASE_SERVICE_ACCOUNT_KEY_PATH
