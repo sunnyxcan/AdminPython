@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/api/index.py"
+    }
+  ],
+  "env": {
+    "DATABASE_URL": "@database_url",
+    "FIREBASE_SERVICE_ACCOUNT_BASE64": "@firebase_service_account_base64",
+    "PROJECT_NAME": "Admin Panel API",
+    "API_V1_STR": "/api"
+  }
+}
