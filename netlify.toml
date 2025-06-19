@@ -2,19 +2,15 @@
 
 [build]
 base = "."
-publish = "build_output" 
+# publish = "build_output" # HAPUS BARIS INI ATAU KOMENTARI
 command = "echo 'Netlify build for Python Functions starting...'"
 
 [functions]
 directory = "netlify/functions"
 
-# ---------- PERBAIKAN DI SINI ----------
-# python_version sekarang harus didefinisikan di dalam sub-tabel
-[functions.python] # Ganti 'python_version' menjadi '[functions.python]'
-version = "3.9" # Dan letakkan versi di bawah 'version ='
-# --------------------------------------
+[functions.python]
+version = "3.9"
 
-# Bagian ini tetap sama
 [[redirects]]
 from = "/api/*"
 to = "/.netlify/functions/api/:splat"
