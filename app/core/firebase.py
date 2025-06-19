@@ -2,28 +2,47 @@
 import firebase_admin
 from firebase_admin import credentials, auth
 import os
+import json # Tambahkan import ini untuk memproses JSON
+import base64 # Tambahkan import ini untuk mendekode Base64
 import logging
 
 logger = logging.getLogger(__name__)
 
-# Path ke serviceAccountKey.json Anda
-# Pastikan ini aman dan tidak terekspos di repositori publik
-# Anda bisa menyimpannya di luar proyek atau menggunakan variabel lingkungan
-SERVICE_ACCOUNT_KEY_PATH = os.getenv("FIREBASE_ADMIN_SDK_PATH", "path/to/your/serviceAccountKey.json")
+# Nama variabel lingkungan tempat Anda menyimpan string Base64 kredensial
+# Ganti dengan nama yang Anda gunakan di Netlify (misalnya FIREBASE_SERVICE_ACCOUNT_BASE64)
+FIREBASE_CREDENTIALS_ENV_VAR = "FIREBASE_SERVICE_ACCOUNT_BASE64" # Sesuaikan nama ini
 
 def initialize_firebase_admin():
     if not firebase_admin._apps: # Cek apakah Firebase Admin sudah diinisialisasi
         try:
-            # Menggunakan variabel lingkungan untuk path jika tersedia, atau path langsung
-            if os.path.exists(SERVICE_ACCOUNT_KEY_PATH):
-                cred = credentials.Certificate(SERVICE_ACCOUNT_KEY_PATH)
-                firebase_admin.initialize_app(cred)
-                logger.info("Firebase Admin SDK berhasil diinisialisasi.")
+            # Ambil string Base64 dari variabel lingkungan
+            firebase_credentials_base64 = os.getenv(FIREBASE_CREDENTIALS_ENV_VAR)
+
+            if firebase_credentials_base64:
+                try:
+                    # Dekode string Base64 kembali ke JSON byte
+                    decoded_bytes = base64.b64decode(firebase_credentials_base64)
+                    
+                    # Dekode byte ke string UTF-8 dan kemudian parse sebagai JSON
+                    service_account_info = json.loads(decoded_bytes.decode('utf-8'))
+
+                    # Inisialisasi Firebase menggunakan objek Python dari JSON
+                    cred = credentials.Certificate(service_account_info)
+                    firebase_admin.initialize_app(cred)
+                    
+                    logger.info("Firebase Admin SDK berhasil diinisialisasi dari variabel lingkungan.")
+
+                except (json.JSONDecodeError, base64.binascii.Error) as e:
+                    logger.critical(f"Gagal mendekode atau mem-parsing kredensial Firebase dari variabel lingkungan: {e}")
+                    raise ValueError("Format kredensial Firebase di variabel lingkungan tidak valid.")
+                except Exception as e:
+                    logger.critical(f"Gagal menginisialisasi Firebase Admin SDK dengan kredensial dari variabel lingkungan: {e}")
+                    raise
             else:
-                logger.error(f"File service account key tidak ditemukan di: {SERVICE_ACCOUNT_KEY_PATH}")
-                raise FileNotFoundError(f"Firebase Admin SDK key file not found at {SERVICE_ACCOUNT_KEY_PATH}")
+                logger.error(f"Variabel lingkungan '{FIREBASE_CREDENTIALS_ENV_VAR}' tidak ditemukan. Firebase tidak diinisialisasi.")
+                raise ValueError(f"Firebase Admin SDK kredensial tidak ditemukan di variabel lingkungan '{FIREBASE_CREDENTIALS_ENV_VAR}'")
         except Exception as e:
-            logger.critical(f"Gagal menginisialisasi Firebase Admin SDK: {e}")
+            logger.critical(f"Kesalahan umum saat inisialisasi Firebase Admin SDK: {e}")
             raise
     else:
         logger.info("Firebase Admin SDK sudah diinisialisasi.")

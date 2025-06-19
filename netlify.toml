@@ -1,0 +1,52 @@
+# backend/netlify.toml
+
+[build]
+  # Direktori dasar (base directory) tempat Netlify akan menjalankan perintah build.
+  # Karena netlify.toml ini berada di dalam folder 'backend',
+  # dan semua kode yang relevan ada di dalam 'backend',
+  # kita bisa mengosongkan ini atau set ke "." jika 'backend' adalah root repo Anda.
+  # Jika seluruh repo (misalnya 'Aiven/') adalah root Git, dan 'backend/' adalah subfolder,
+  # maka netlify.toml harus di 'Aiven/' dan 'base = "backend"'.
+  # Untuk contoh ini, kita asumsikan Anda mendefinisikan situs Netlify dari folder 'backend'.
+  base = "."
+
+  # Direktori tempat Netlify akan mencari file statis untuk di-deploy.
+  # Karena ini hanya API Functions dan tidak ada frontend statis yang dibangun,
+  # kita bisa arahkan ke direktori dummy yang tidak ada atau kosong.
+  publish = "build_output" 
+
+  # Perintah build umum. Untuk fungsi Python, Netlify secara otomatis menginstal
+  # dependensi dari requirements.txt di dalam folder fungsi.
+  # Jadi, perintah ini bisa sangat minimal.
+  command = "echo 'Netlify build for Python Functions starting...'"
+
+[functions]
+  # Direktori tempat semua fungsi Netlify Anda berada, relatif terhadap 'base' directory.
+  # Dalam kasus ini, fungsi API kita ada di 'backend/netlify/functions', jadi path-nya adalah 'netlify/functions'.
+  directory = "netlify/functions"
+  
+  # Versi Python yang akan digunakan untuk fungsi Anda.
+  # Pastikan ini sesuai dengan versi yang Anda gunakan dalam pengembangan lokal
+  # dan versi yang didukung oleh Netlify (misalnya, "python3.9", "python3.10", "python3.11").
+  python_version = "3.9" 
+
+# Bagian ini sangat penting untuk mengarahkan permintaan HTTP ke fungsi API Anda.
+# Kita akan membuat satu redirect untuk mengarahkan semua permintaan yang dimulai dengan '/api/'
+# ke fungsi 'api' kita.
+[[redirects]]
+  # Jalur yang akan dicegat oleh Netlify. Misalnya, permintaan ke "your-domain.netlify.app/api/users"
+  from = "/api/*"
+  
+  # Jalur internal ke fungsi Netlify Anda.
+  # "/.netlify/functions/" adalah awalan standar untuk semua fungsi Netlify.
+  # "api" adalah nama folder fungsi Anda di dalam direktori 'netlify/functions'.
+  # ":splat" adalah placeholder yang akan meneruskan sisa jalur dari 'from' ke fungsi.
+  # Contoh: "/api/users" akan diteruskan ke fungsi sebagai "/users".
+  to = "/.netlify/functions/api/:splat"
+  
+  # Kode status HTTP untuk pengalihan. 200 berarti sukses dan konten diambil dari fungsi.
+  status = 200
+  
+  # Memaksa pengalihan ini meskipun ada file statis dengan nama yang cocok.
+  # Penting untuk API.
+  force = true
