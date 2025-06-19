@@ -6,7 +6,7 @@ base = "."
 command = "echo 'Netlify build for Python Functions starting...'"
 
 [functions]
-directory = "netlify/functions/api" # <--- UBAH INI
+directory = "netlify/functions/api"
 
 [functions.python]
 version = "3.9"
