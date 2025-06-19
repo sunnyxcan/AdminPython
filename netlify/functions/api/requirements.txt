@@ -38,6 +38,7 @@ hyperframe==6.1.0
 idna==3.10
 Mako==1.3.10
 MarkupSafe==3.0.2
+mangum==0.17.0
 msgpack==1.1.0
 proto-plus==1.26.1
 protobuf==6.31.1
