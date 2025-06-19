@@ -2,11 +2,11 @@
 
 [build]
 base = "."
-# publish = "build_output" # HAPUS BARIS INI ATAU KOMENTARI
+# publish = "build_output"
 command = "echo 'Netlify build for Python Functions starting...'"
 
 [functions]
-directory = "netlify/functions"
+directory = "netlify/functions/api" # <--- UBAH INI
 
 [functions.python]
 version = "3.9"
