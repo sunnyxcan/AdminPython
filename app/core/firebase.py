@@ -1,37 +1,28 @@
-# app/core/firebase_admin.py
+# app/core/firebase.py (Ini adalah file yang diimpor oleh app/main.py Anda)
 import firebase_admin
 from firebase_admin import credentials, auth
 import os
-import json # Tambahkan import ini untuk memproses JSON
-import base64 # Tambahkan import ini untuk mendekode Base64
+import json
+import base64
 import logging
 
 logger = logging.getLogger(__name__)
 
-# Nama variabel lingkungan tempat Anda menyimpan string Base64 kredensial
-# Ganti dengan nama yang Anda gunakan di Netlify (misalnya FIREBASE_SERVICE_ACCOUNT_BASE64)
-FIREBASE_CREDENTIALS_ENV_VAR = "FIREBASE_SERVICE_ACCOUNT_BASE64" # Sesuaikan nama ini
+# Ini harus konsisten dengan nama variabel lingkungan di Netlify dan config.py
+FIREBASE_CREDENTIALS_ENV_VAR = "FIREBASE_SERVICE_ACCOUNT_BASE64" 
 
 def initialize_firebase_admin():
-    if not firebase_admin._apps: # Cek apakah Firebase Admin sudah diinisialisasi
+    if not firebase_admin._apps:
         try:
-            # Ambil string Base64 dari variabel lingkungan
             firebase_credentials_base64 = os.getenv(FIREBASE_CREDENTIALS_ENV_VAR)
 
             if firebase_credentials_base64:
                 try:
-                    # Dekode string Base64 kembali ke JSON byte
                     decoded_bytes = base64.b64decode(firebase_credentials_base64)
-                    
-                    # Dekode byte ke string UTF-8 dan kemudian parse sebagai JSON
                     service_account_info = json.loads(decoded_bytes.decode('utf-8'))
-
-                    # Inisialisasi Firebase menggunakan objek Python dari JSON
                     cred = credentials.Certificate(service_account_info)
                     firebase_admin.initialize_app(cred)
-                    
                     logger.info("Firebase Admin SDK berhasil diinisialisasi dari variabel lingkungan.")
-
                 except (json.JSONDecodeError, base64.binascii.Error) as e:
                     logger.critical(f"Gagal mendekode atau mem-parsing kredensial Firebase dari variabel lingkungan: {e}")
                     raise ValueError("Format kredensial Firebase di variabel lingkungan tidak valid.")
@@ -48,7 +39,6 @@ def initialize_firebase_admin():
         logger.info("Firebase Admin SDK sudah diinisialisasi.")
 
 def get_firebase_auth():
-    """Mengembalikan instance Firebase Auth."""
     if not firebase_admin._apps:
-        initialize_firebase_admin() # Pastikan terinisialisasi sebelum digunakan
+        initialize_firebase_admin()
     return auth
