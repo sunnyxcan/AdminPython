@@ -42,6 +42,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Tambahkan endpoint ini untuk tampilan awal
+@app.get("/")
+async def read_root():
+    """
+    Endpoint root untuk API Admin Panel.
+    Mengembalikan pesan selamat datang dan informasi dasar API.
+    """
+    return {
+        "message": "Selamat datang di Admin Panel API!",
+        "project_name": settings.PROJECT_NAME,
+        "api_version_prefix": settings.API_V1_STR,
+        "documentation_url": "/docs",
+        "health_check": "API is running successfully."
+    }
+
 # Sertakan router API setelah middleware CORS
 app.include_router(auth_router.router)
 app.include_router(users_router.router)
