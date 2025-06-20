@@ -50,8 +50,7 @@ async def read_root():
     Mengembalikan pesan selamat datang dan informasi dasar API.
     """
     return {
-        "message": "Selamat datang di Admin Panel API!",
-        "project_name": settings.PROJECT_NAME,
+        "message": "Selamat datang!",
         "health_check": "API is running successfully."
     }
 
