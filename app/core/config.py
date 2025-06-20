@@ -9,12 +9,9 @@ class Settings:
     API_V1_STR: str = "/api"
 
     DATABASE_URL: str = os.getenv("DATABASE_URL")
+    # Hapus atau ganti ini jika kamu tidak lagi menggunakan path file
+    # FIREBASE_SERVICE_ACCOUNT_KEY: str = os.getenv("FIREBASE_SERVICE_ACCOUNT_KEY_PATH")
     
-    # --- PERUBAHAN DI SINI ---
-    # Mengubah nama variabel Python dan kunci os.getenv()
-    # agar sesuai dengan nama variabel lingkungan di Netlify (FIREBASE_SERVICE_ACCOUNT_BASE64)
-    FIREBASE_SERVICE_ACCOUNT_BASE64: str = os.getenv("FIREBASE_SERVICE_ACCOUNT_BASE64")
-
     class Config:
         case_sensitive = True
 
