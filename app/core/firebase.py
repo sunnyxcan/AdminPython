@@ -3,31 +3,33 @@ import firebase_admin
 from firebase_admin import credentials, auth
 import os
 import logging
-import json # Tambahkan ini
+import json
+from app.core.config import settings # <-- Pastikan Anda mengimpor settings di sini
 
 logger = logging.getLogger(__name__)
 
-# Menggunakan variabel lingkungan untuk konten JSON, bukan path file
-FIREBASE_SERVICE_ACCOUNT_KEY_JSON = os.getenv("FIREBASE_SERVICE_ACCOUNT_KEY_JSON") # Nama variabel lingkungan baru
+# Hapus baris ini:
+# FIREBASE_SERVICE_ACCOUNT_KEY_JSON = os.getenv("FIREBASE_SERVICE_ACCOUNT_KEY_JSON")
 
 def initialize_firebase_admin():
     if not firebase_admin._apps:
         try:
-            if FIREBASE_SERVICE_ACCOUNT_KEY_JSON:
-                # Muat dari string JSON
-                cred_json = json.loads(FIREBASE_SERVICE_ACCOUNT_KEY_JSON)
+            # Gunakan settings.FIREBASE_SERVICE_ACCOUNT_KEY
+            if settings.FIREBASE_SERVICE_ACCOUNT_KEY: # Memastikan variabel tidak kosong
+                # Sekarang, selalu asumsikan ini adalah string JSON
+                cred_json = json.loads(settings.FIREBASE_SERVICE_ACCOUNT_KEY)
                 cred = credentials.Certificate(cred_json)
                 firebase_admin.initialize_app(cred)
-                logger.info("Firebase Admin SDK berhasil diinisialisasi dari variabel lingkungan JSON.")
+                logger.info("Firebase Admin SDK berhasil diinisialisasi dari settings.FIREBASE_SERVICE_ACCOUNT_KEY.")
             else:
-                logger.error("Variabel lingkungan FIREBASE_SERVICE_ACCOUNT_KEY_JSON tidak ditemukan atau kosong.")
-                raise ValueError("Firebase Admin SDK JSON content not found in environment variable.")
+                logger.error("settings.FIREBASE_SERVICE_KEY tidak ditemukan atau kosong.")
+                raise ValueError("Firebase Admin SDK JSON content not found in settings.")
         except json.JSONDecodeError as e:
-            logger.critical(f"Gagal mengurai JSON Firebase Admin SDK dari variabel lingkungan: {e}")
-            raise
+            logger.critical(f"Gagal mengurai JSON Firebase Admin SDK dari settings: {e}")
+            raise RuntimeError(f"Failed to initialize Firebase Admin SDK: JSON parsing error - {e}")
         except Exception as e:
             logger.critical(f"Gagal menginisialisasi Firebase Admin SDK: {e}")
-            raise
+            raise RuntimeError(f"Failed to initialize Firebase Admin SDK: {e}")
     else:
         logger.info("Firebase Admin SDK sudah diinisialisasi.")
 

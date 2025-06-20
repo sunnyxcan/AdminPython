@@ -52,8 +52,6 @@ async def read_root():
     return {
         "message": "Selamat datang di Admin Panel API!",
         "project_name": settings.PROJECT_NAME,
-        "api_version_prefix": settings.API_V1_STR,
-        "documentation_url": "/docs",
         "health_check": "API is running successfully."
     }
 

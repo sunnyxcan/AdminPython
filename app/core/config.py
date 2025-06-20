@@ -9,9 +9,8 @@ class Settings:
     API_V1_STR: str = "/api"
 
     DATABASE_URL: str = os.getenv("DATABASE_URL")
-    # Hapus atau ganti ini jika kamu tidak lagi menggunakan path file
-    # FIREBASE_SERVICE_ACCOUNT_KEY: str = os.getenv("FIREBASE_SERVICE_ACCOUNT_KEY_PATH")
-    
+    FIREBASE_SERVICE_ACCOUNT_KEY: str = os.getenv("FIREBASE_SERVICE_ACCOUNT_KEY_PATH")
+
     class Config:
         case_sensitive = True
 
